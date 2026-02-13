@@ -31,11 +31,12 @@ String _getNameById(List<MetroStation> line, int id) {
   return line.firstWhere((s) => s.id == id).name;
 }
 
-List<String> _buildSegment(List<MetroStation> line, int from, int to) {
+List<String> _buildSegment(List<MetroStation> line, int from, int to, {bool skipFirst = false}) {
   final route = <String>[];
   for (int i = from; from > to ? i >= to : i <= to; from > to ? i-- : i++) {
     route.add(_getNameById(line, i));
   }
+  if (skipFirst && route.isNotEmpty) route.removeAt(0);
   return route;
 }
 
@@ -106,7 +107,7 @@ class MetroRouteService {
       final int all = part1 + part2;
 
       final route = _buildSegment(line1, c, b);
-      route.addAll(_buildSegment(line2, c2, b2));
+      route.addAll(_buildSegment(line2, c2, b2, skipFirst: true));
 
       return RouteResult(
         stations: all,
@@ -150,7 +151,7 @@ class MetroRouteService {
       final int all = part1 + part2;
 
       final route = _buildSegment(line1, c, b);
-      route.addAll(_buildSegment(line3, c2, b2));
+      route.addAll(_buildSegment(line3, c2, b2, skipFirst: true));
 
       return RouteResult(
         stations: all,
@@ -213,7 +214,7 @@ class MetroRouteService {
       final int all = part1 + part2;
 
       final route = _buildSegment(line2, c, b);
-      route.addAll(_buildSegment(line1, c2, b2));
+      route.addAll(_buildSegment(line1, c2, b2, skipFirst: true));
 
       return RouteResult(
         stations: all,
@@ -257,7 +258,7 @@ class MetroRouteService {
       final int all = part1 + part2;
 
       final route = _buildSegment(line2, c, b);
-      route.addAll(_buildSegment(line3, c2, b2));
+      route.addAll(_buildSegment(line3, c2, b2, skipFirst: true));
 
       return RouteResult(
         stations: all,
@@ -320,7 +321,7 @@ class MetroRouteService {
       final int all = part1 + part2;
 
       final route = _buildSegment(line3, c, b);
-      route.addAll(_buildSegment(line1, c2, b2));
+      route.addAll(_buildSegment(line1, c2, b2, skipFirst: true));
 
       return RouteResult(
         stations: all,
@@ -364,7 +365,7 @@ class MetroRouteService {
       final int all = part1 + part2;
 
       final route = _buildSegment(line3, c, b);
-      route.addAll(_buildSegment(line2, c2, b2));
+      route.addAll(_buildSegment(line2, c2, b2, skipFirst: true));
 
       return RouteResult(
         stations: all,

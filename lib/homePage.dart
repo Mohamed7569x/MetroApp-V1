@@ -117,7 +117,7 @@ class Homepage extends StatelessWidget {
       }
       final loc = locations.first;
       final nearest = _findNearestStation(loc.latitude, loc.longitude);
-      selectOneController.text = nearest.name;
+      selectTwoController.text = nearest.name;
       _showSnackbar('Nearest station: ${nearest.name}', isError: false);
     } catch (e) {
       _showSnackbar('Could not find address', isError: true);
@@ -161,161 +161,167 @@ class Homepage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: MetroColors.background,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 24),
-
-              _buildSectionLabel('FROM', Icons.trip_origin),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Expanded(child: _buildStationDropdown(selectOneController)),
-                  const SizedBox(width: 10),
-                  _buildIconButton(
-                    icon: Icons.map_outlined,
-                    onPressed: () {
-                      if (selectOneController.text.isEmpty) {
-                        _showSnackbar('Please select a station first',
-                            isError: true);
-                        return;
-                      }
-                      final station =
-                      _getStationWithCoords(selectOneController.text);
-                      if (station != null) {
-                        final uri = Uri.parse(
-                            'geo:0,0?q=${station.lat},${station.long}');
-                        launchUrl(uri);
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              _buildSectionLabel('TO', Icons.location_on_outlined),
-              const SizedBox(height: 8),
-              _buildStationDropdown(selectTwoController),
-              const SizedBox(height: 24),
-
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: _buildPrimaryButton(
-                      label: 'Find Route',
-                      icon: Icons.route,
-                      onPressed: () {
-                        if (selectOneController.text.isNotEmpty &&
-                            selectTwoController.text.isNotEmpty) {
-                          result.value = MetroRouteService().findRoute(
-                              selectOneController.text,
-                              selectTwoController.text);
-                          if (result.value == null) {
-                            _showSnackbar('Route not found', isError: true);
-                          }
-                        } else {
-                          _showSnackbar('Please select both stations',
-                              isError: true);
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    flex: 2,
-                    child: _buildSecondaryButton(
-                      label: 'Nearest',
-                      icon: Icons.my_location,
-                      onPressed: () => _handleGetLocation(),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              Obx(() {
-                final r = result.value;
-                if (r == null) return const SizedBox();
-                return _buildRouteResult(r);
-              }),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: MetroColors.surface,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.3),
-              blurRadius: 16,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 12,
-          bottom: MediaQuery.of(context).padding.bottom + 12,
-        ),
-        child: Row(
+        child: Column(
           children: [
+            // ─── Scrollable content ─────────────────────
             Expanded(
-              child: TextField(
-                controller: locationController,
-                style: const TextStyle(
-                    color: MetroColors.textPrimary, fontSize: 14),
-                decoration: InputDecoration(
-                  hintText: 'Enter address to find nearest station...',
-                  hintStyle: TextStyle(
-                      color: MetroColors.textSecondary.withOpacity(0.6),
-                      fontSize: 14),
-                  prefixIcon: const Icon(Icons.search,
-                      color: MetroColors.textSecondary, size: 20),
-                  filled: true,
-                  fillColor: MetroColors.surfaceLight,
-                  contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                    const BorderSide(color: MetroColors.accent, width: 1.5),
-                  ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 24),
+
+                    _buildSectionLabel('FROM', Icons.trip_origin),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: _buildStationDropdown(selectOneController)),
+                        const SizedBox(width: 10),
+                        _buildIconButton(
+                          icon: Icons.map_outlined,
+                          onPressed: () {
+                            if (selectOneController.text.isEmpty) {
+                              _showSnackbar('Please select a station first',
+                                  isError: true);
+                              return;
+                            }
+                            final station =
+                            _getStationWithCoords(selectOneController.text);
+                            if (station != null) {
+                              final uri = Uri.parse(
+                                  'geo:0,0?q=${station.lat},${station.long}');
+                              launchUrl(uri);
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    _buildSectionLabel('TO', Icons.location_on_outlined),
+                    const SizedBox(height: 8),
+                    _buildStationDropdown(selectTwoController),
+                    const SizedBox(height: 24),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: _buildPrimaryButton(
+                            label: 'Find Route',
+                            icon: Icons.route,
+                            onPressed: () {
+                              if (selectOneController.text.isNotEmpty &&
+                                  selectTwoController.text.isNotEmpty) {
+                                result.value = MetroRouteService().findRoute(
+                                    selectOneController.text,
+                                    selectTwoController.text);
+                                if (result.value == null) {
+                                  _showSnackbar('Route not found', isError: true);
+                                }
+                              } else {
+                                _showSnackbar('Please select both stations',
+                                    isError: true);
+                              }
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 2,
+                          child: _buildSecondaryButton(
+                            label: 'Nearest',
+                            icon: Icons.my_location,
+                            onPressed: () => _handleGetLocation(),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    Obx(() {
+                      final r = result.value;
+                      if (r == null) return const SizedBox();
+                      return _buildRouteResult(r);
+                    }),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+
+            // ─── Bottom search bar (moves with keyboard) ────
             Container(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [MetroColors.accent, MetroColors.accentDim],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () => _handleSubmitAddress(),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                    child:
-                    Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                color: MetroColors.surface,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 16,
+                    offset: const Offset(0, -4),
                   ),
-                ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: locationController,
+                      style: const TextStyle(
+                          color: MetroColors.textPrimary, fontSize: 14),
+                      decoration: InputDecoration(
+                        hintText: 'Enter address to find nearest station...',
+                        hintStyle: TextStyle(
+                            color: MetroColors.textSecondary.withOpacity(0.6),
+                            fontSize: 14),
+                        prefixIcon: const Icon(Icons.search,
+                            color: MetroColors.textSecondary, size: 20),
+                        filled: true,
+                        fillColor: MetroColors.surfaceLight,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                              color: MetroColors.accent, width: 1.5),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [MetroColors.accent, MetroColors.accentDim],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () => _handleSubmitAddress(),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 18, vertical: 14),
+                          child: Icon(Icons.send_rounded,
+                              color: Colors.white, size: 20),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -563,7 +569,6 @@ class Homepage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─── Stats Row ─────────────────────────
           Row(
             children: [
               _buildStatChip(Icons.linear_scale, '${r.stations}', 'Stations'),
@@ -575,7 +580,6 @@ class Homepage extends StatelessWidget {
           ),
           const SizedBox(height: 18),
 
-          // ─── Direction Info ────────────────────
           if (r.direction1 != null) ...[
             _buildInfoRow(Icons.arrow_forward, 'Direction', r.direction1!),
             const SizedBox(height: 8),
@@ -585,7 +589,8 @@ class Homepage extends StatelessWidget {
             const SizedBox(height: 8),
           ],
           if (r.direction2 != null) ...[
-            _buildInfoRow(Icons.arrow_forward, 'After transfer', r.direction2!),
+            _buildInfoRow(
+                Icons.arrow_forward, 'After transfer', r.direction2!),
             const SizedBox(height: 8),
           ],
 
@@ -593,7 +598,6 @@ class Homepage extends StatelessWidget {
           const Divider(color: MetroColors.surfaceLight, height: 1),
           const SizedBox(height: 14),
 
-          // ─── Route Stations ────────────────────
           const Text(
             'ROUTE',
             style: TextStyle(
