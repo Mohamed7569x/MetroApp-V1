@@ -6,9 +6,9 @@ A Flutter mobile application for planning routes across Cairo's metro network. S
 
 ## Screenshots
 
-| Home Screen | Route Result | Transfer Route |
+| Home Screen | Route Result | Search By Address |
 |:-----------:|:------------:|:--------------:|
-| ![Home](screenshots/home.png) | ![Route](screenshots/route.png) | ![Transfer](screenshots/transfer.png) |
+| ![Home](/home.jpg) | ![Route](/route.jpg) | ![Transfer](/search.jpg) |
 
 
 ---
